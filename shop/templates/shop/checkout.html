@@ -1,0 +1,251 @@
+ {% extends 'shop/basic.html' %}
+
+ {% block title %} Checkout
+    {% endblock title %}
+{% block css %}
+#namevalid{
+  color:red;
+}
+{% endblock css %}
+
+{% block body %} 
+
+<div class="container">
+<div class="col my-4">
+<h2>Step 1- Bigm Express Checkout - Review your cart items</h2>
+<div class="my-4">
+<ul class="list-group my-4" id="items">
+</ul>
+{% comment %} {% if cart.length > 0 %} {% endcomment %}
+<p> Your Cart Total <b> Rs: <span id="totalPrice"></span> </b>  Only </p>
+{% comment %} {% endif %} {% endcomment %}
+</div>
+</div>
+
+
+<div class="col my-4">
+<h2>Step 2 - Enter address and other details:</h2>
+<form method="post" action="/shop/checkout/">{% csrf_token %}
+  <input type="hidden" id="itemsJson" name="itemsJson">
+  <input type="hidden" id="amount" name="amount">
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputname">Name</label>
+      <input type="text" class="form-control is-invalid" id="name" name="name">
+      <small id="namevalid" class="form-text text-muted invalid-feedback">Your username must be 2-10 characters long and should not start with number.</small>
+    </div>
+    <div class="form-group col-md-6">
+      <label for="inputEmail4">Email</label>
+      <input type="email" class="form-control" id="email" name="email">
+      <small id="emailvalid" class="form-text text-muted invalid-feedback">Your email must be valid.</small>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputAddress">Address</label>
+
+    <input type="text" class="form-control" id="address1" name="address1" placeholder="1234 Main St">
+    <small id="addressvalid" class="form-text text-muted invalid-feedback">Your address must be valid.</small>
+  </div>
+  <div class="form-group">
+    <label for="inputAddress2">Address Line 2</label>
+    <input type="text" class="form-control" id="address2" name="address2" placeholder="Apartment, studio, or floor">
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputCity">City</label>
+      <input type="text" class="form-control" name="city" id="city">
+      <small id="cityvalid" class="form-text text-muted invalid-feedback">Your city must be valid.</small>
+    </div>
+    <div class="form-group col-md-4">
+      <label for="inputState">State</label>
+      <input type="text" class="form-control" name="state" id="state" placeholder="Enter State">
+      <small id="statevalid" class="form-text text-muted invalid-feedback">Your state must be valid.</small>
+      
+    </div>
+    <div class="form-group col-md-2">
+      <label for="inputZip">Zip</label>
+      <input type="text" class="form-control" name="zip_code" id="zip_code">
+      <small id="zipvalid" class="form-text text-muted invalid-feedback">Your zip code must be valid.</small>
+    </div>
+  </div>
+  <div class="form-group">
+      <label for="inputZip">Phone Number:</label>
+      <input type="tel" class="form-control" name="phone" id="phone">
+      <small id="phonevalid" class="form-text text-muted invalid-feedback">Your phone number must be 10 digits long.</small>
+    </div>
+  
+  <button type="submit" id="submit" class="btn btn-primary">Place Order</button>
+</form>
+</div>
+</div>
+
+
+{% endblock body %}
+
+{% block js %}
+
+<script>
+// Form validation using regx starts here
+ const name = document.getElementById('name')
+  const address = document.getElementById('address1')
+  const email = document.getElementById('email')
+  const city = document.getElementById('city')
+  const state = document.getElementById('state')
+  const zip = document.getElementById('zip_code')
+  const phone = document.getElementById('phone')
+  const btn = document.getElementById('submit')
+
+  name.addEventListener('blur',()=>{
+    let regex = /^[a-zA-Z]([0-9a-zA-Z]){0,10}/;
+    let str = name.value;
+    if(regex.test(str)){
+      
+      name.classList.remove('is-invalid')
+    }
+    else{
+      
+      name.classList.add('is-invalid')
+    }
+  });
+
+  email.addEventListener('blur',()=>{
+    let regex = /^([_\-\.a-zA-Z0-9]+)@([_\-\.a-zA-Z0-9]+)\.([a-zA-Z]){2,10}$/;
+    let str = email.value;
+    if(regex.test(str)){
+      
+      email.classList.remove('is-invalid')
+    }
+    else{
+      
+      email.classList.add('is-invalid')
+    }
+  });
+
+  phone.addEventListener('blur',()=>{
+    let regex = /^[0-9]{10,13}/;
+    let str = phone.value;
+    if(regex.test(str)){
+      
+      phone.classList.remove('is-invalid')
+    }
+    else{
+      
+      phone.classList.add('is-invalid')
+    }
+  });
+
+  city.addEventListener('blur',()=>{
+    let regex = /^[a-zA-Z]{2,10}/;
+    let str = city.value;
+    if(regex.test(str)){
+      
+      city.classList.remove('is-invalid')
+    }
+    else{
+      
+      city.classList.add('is-invalid')
+    }
+  });
+
+
+  state.addEventListener('blur',()=>{
+    let regex = /^[a-zA-Z]{2,10}/;
+    let str = state.value;
+    if(regex.test(str)){
+      
+      state.classList.remove('is-invalid')
+    }
+    else{
+      
+      state.classList.add('is-invalid')
+    }
+  });
+
+
+  zip.addEventListener('blur',()=>{
+    let regex = /^[0-9]{4,10}/;
+    let str = zip.value;
+    if(regex.test(str)){
+      
+      zip.classList.remove('is-invalid')
+    }
+    else{
+      
+      zip.classList.add('is-invalid')
+    }
+  });
+
+  address.addEventListener('blur',()=>{
+    let regex = /^[a-zA-Z]([0-9a-zA-Z]){5,50}/;
+    let str = address.value;
+    if(regex.test(str)){
+      
+      address.classList.remove('is-invalid')
+    }
+    else{
+      
+      address.classList.add('is-invalid')
+    }
+  });
+  // Form validation using regx ends here
+
+
+
+
+
+
+
+
+if(localStorage.getItem('cart')==null){
+  cart = {}
+}
+else 
+{
+  cart = JSON.parse(localStorage.getItem('cart'));
+
+}
+var sum = 0;
+var totalPrice = 0;
+if ($.isEmptyObject(cart)){
+    mystr = `<p>Your cart is empty, please add some items to Your cart before checking out!</p>`
+    
+    $('#items').append(mystr);
+
+}
+else{
+      for(item in cart){
+          let name = cart[item][1];
+          let qty = cart[item][0];
+          let itemPrice = cart[item][2];
+          sum = sum + qty;
+          totalPrice = totalPrice + qty*itemPrice
+          mystr1 = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                              ${name}
+                          <span class="badge badge-primary badge-pill">${qty}</span>
+                              </li>`
+
+          $('#items').append(mystr1);
+      }
+}
+
+
+document.getElementById('cart').innerHTML = sum;
+document.getElementById('totalPrice').innerHTML = totalPrice;
+
+$('#itemsJson').val(JSON.stringify(cart));
+
+{% if thank %}
+alert('Thanks for ordering with us. Your order id is {{id}}.Use it to track your order using our order tracker.')
+localStorage.clear();
+document.location="/shop";
+{% endif %}
+
+// setting the value of amount
+
+$('#amount').val($('#totalPrice').html())
+
+</script>
+
+
+
+{% endblock js %}
